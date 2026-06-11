@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Hall of Shame | 3D Gallery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Outfit:wght@900&display=swap');
+
+        body {
+            background: radial-gradient(circle at center, #1e1e2e, #000000);
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+
+        .comic-title {
+            font-family: 'Bangers', cursive;
+            text-shadow: 4px 4px 0px #ef4444;
+        }
+
+        .gallery-container {
+            transform-style: preserve-3d;
+        }
+
+        .photo-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .photo-card:hover {
+            z-index: 50;
+            filter: brightness(1.2);
+        }
+
+        .glass-ui {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Floating Meme Stickers */
+        .sticker {
+            position: absolute;
+            width: 80px;
+            pointer-events: none;
+            z-index: 60;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-8">
+
+    <a href="h06.html" class="back-btn glass-ui px-6 py-3 rounded-full font-bold hover:bg-white hover:text-black transition-all">
+        ← Go Back to Reality
+    </a>
+
+    <header class="text-center mt-12 mb-20">
+        <h1 class="comic-title text-6xl md:text-8xl uppercase tracking-widest italic animate-bounce">
+            Hall of <span class="text-yellow-400">Shame</span>
+        </h1>
+        <p class="text-gray-400 mt-4 text-xl">Warning: Extreme levels of cringe detected ⚠️</p>
+        
+        <button onclick="activateChaos()" class="mt-8 bg-red-600 hover:bg-red-500 text-white font-black px-8 py-3 rounded-lg transform hover:scale-110 transition-all shadow-[0_0_20px_rgba(239,68,68,0.5)]">
+            ACTIVATE CHAOS MODE 🌪️
+        </button>
+    </header>
+
+    <div class="gallery-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 max-w-7xl mx-auto px-4">
+        
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000" data-tilt-glare="true">
+            <img src="https://picsum.photos/seed/funny1/400/500" class="w-full h-72 object-cover rounded-xl mb-4">
+            <div class="text-center font-bold text-yellow-400 italic">"The moment we realized we failed the midterms"</div>
+        </div>
+
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000">
+            <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=oops" class="w-full h-72 object-contain bg-zinc-800 rounded-xl mb-4">
+            <div class="text-center font-bold text-cyan-400 italic">"The Official Squad Mascot"</div>
+        </div>
+
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000">
+            <img src="https://picsum.photos/seed/sleep/400/500" class="w-full h-72 object-cover rounded-xl mb-4">
+            <div class="text-center font-bold text-green-400 italic">"Library or Bedroom? Who knows."</div>
+        </div>
+
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000">
+            <img src="https://picsum.photos/seed/party/400/500" class="w-full h-72 object-cover rounded-xl mb-4">
+            <div class="text-center font-bold text-purple-400 italic">"4 AM Philosophers"</div>
+        </div>
+
+         <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000" data-tilt-glare="true">
+            <img src="https://picsum.photos/seed/funny1/400/500" class="w-full h-72 object-cover rounded-xl mb-4">
+            <div class="text-center font-bold text-yellow-400 italic">"The moment we realized we failed the midterms"</div>
+        </div>
+
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000">
+            <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=oops" class="w-full h-72 object-contain bg-zinc-800 rounded-xl mb-4">
+            <div class="text-center font-bold text-cyan-400 italic">"The Official Squad Mascot"</div>
+        </div>
+
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000">
+            <img src="https://picsum.photos/seed/sleep/400/500" class="w-full h-72 object-cover rounded-xl mb-4">
+            <div class="text-center font-bold text-green-400 italic">"Library or Bedroom? Who knows."</div>
+        </div>
+
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000">
+            <img src="https://picsum.photos/seed/party/400/500" class="w-full h-72 object-cover rounded-xl mb-4">
+            <div class="text-center font-bold text-purple-400 italic">"4 AM Philosophers"</div>
+        </div>
+
+
+         <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000" data-tilt-glare="true">
+            <img src="https://picsum.photos/seed/funny1/400/500" class="w-full h-72 object-cover rounded-xl mb-4">
+            <div class="text-center font-bold text-yellow-400 italic">"The moment we realized we failed the midterms"</div>
+        </div>
+
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000">
+            <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=oops" class="w-full h-72 object-contain bg-zinc-800 rounded-xl mb-4">
+            <div class="text-center font-bold text-cyan-400 italic">"The Official Squad Mascot"</div>
+        </div>
+
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000">
+            <img src="https://picsum.photos/seed/sleep/400/500" class="w-full h-72 object-cover rounded-xl mb-4">
+            <div class="text-center font-bold text-green-400 italic">"Library or Bedroom? Who knows."</div>
+        </div>
+
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000">
+            <img src="https://picsum.photos/seed/party/400/500" class="w-full h-72 object-cover rounded-xl mb-4">
+            <div class="text-center font-bold text-purple-400 italic">"4 AM Philosophers"</div>
+        </div>
+
+         <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000" data-tilt-glare="true">
+            <img src="https://picsum.photos/seed/funny1/400/500" class="w-full h-72 object-cover rounded-xl mb-4">
+            <div class="text-center font-bold text-yellow-400 italic">"The moment we realized we failed the midterms"</div>
+        </div>
+
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000">
+            <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=oops" class="w-full h-72 object-contain bg-zinc-800 rounded-xl mb-4">
+            <div class="text-center font-bold text-cyan-400 italic">"The Official Squad Mascot"</div>
+        </div>
+
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000">
+            <img src="https://picsum.photos/seed/sleep/400/500" class="w-full h-72 object-cover rounded-xl mb-4">
+            <div class="text-center font-bold text-green-400 italic">"Library or Bedroom? Who knows."</div>
+        </div>
+
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000">
+            <img src="https://picsum.photos/seed/party/400/500" class="w-full h-72 object-cover rounded-xl mb-4">
+            <div class="text-center font-bold text-purple-400 italic">"4 AM Philosophers"</div>
+        </div>
+
+         <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000" data-tilt-glare="true">
+            <img src="https://picsum.photos/seed/funny1/400/500" class="w-full h-72 object-cover rounded-xl mb-4">
+            <div class="text-center font-bold text-yellow-400 italic">"The moment we realized we failed the midterms"</div>
+        </div>
+
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000">
+            <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=oops" class="w-full h-72 object-contain bg-zinc-800 rounded-xl mb-4">
+            <div class="text-center font-bold text-cyan-400 italic">"The Official Squad Mascot"</div>
+        </div>
+
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000">
+            <img src="https://picsum.photos/seed/sleep/400/500" class="w-full h-72 object-cover rounded-xl mb-4">
+            <div class="text-center font-bold text-green-400 italic">"Library or Bedroom? Who knows."</div>
+        </div>
+
+        <div class="photo-card glass-ui p-3 rounded-2xl" data-tilt data-tilt-max="20" data-tilt-speed="1000">
+            <img src="https://picsum.photos/seed/party/400/500" class="w-full h-72 object-cover rounded-xl mb-4">
+            <div class="text-center font-bold text-purple-400 italic">"4 AM Philosophers"</div>
+        </div>
+
+        </div>
+
+    <div class="sticker" style="top: 15%; right: 5%; transform: rotate(15deg);">😂</div>
+    <div class="sticker" style="bottom: 10%; left: 5%; transform: rotate(-10deg);">🤡</div>
+
+    <script>
+        // Init Tilt
+        VanillaTilt.init(document.querySelectorAll(".photo-card"), {
+            max: 25,
+            speed: 400,
+            perspective: 1000,
+            scale: 1.1
+        });
+
+        // Chaos Mode Logic
+        let isChaos = false;
+        function activateChaos() {
+            const cards = document.querySelectorAll('.photo-card');
+            
+            if (!isChaos) {
+                cards.forEach((card, index) => {
+                    gsap.to(card, {
+                        x: () => (Math.random() - 0.5) * 400,
+                        y: () => (Math.random() - 0.5) * 400,
+                        rotation: () => (Math.random() - 0.5) * 90,
+                        duration: 1,
+                        ease: "power2.out"
+                    });
+                });
+                document.body.style.backgroundColor = "#450a0a";
+                isChaos = true;
+            } else {
+                gsap.to(cards, { x: 0, y: 0, rotation: 0, duration: 1, ease: "back.out(1.7)" });
+                document.body.style.backgroundColor = "#000000";
+                isChaos = false;
+            }
+        }
+
+        // Mouse follow effect for light source
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            gsap.to('.gallery-container', {
+                rotationY: (x - 0.5) * 20,
+                rotationX: (y - 0.5) * -20,
+                duration: 1,
+                ease: "power1.out"
+            });
+        });
+    </script>
+</body>
+</html>

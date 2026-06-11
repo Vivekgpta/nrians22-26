@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future Illusion | 3D Chaos</title>
+    <style>
+        :root {
+            --neon-blue: #00d2ff;
+            --neon-pink: #ff00ff;
+            --danger: #ff3131;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Arial Black', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            perspective: 1000px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- 3D INFINITY BACKGROUND --- */
+        #viewport {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            transform-style: preserve-3d;
+            z-index: -1;
+        }
+
+        /* 3D Grid Floor Illusion */
+        .grid-floor {
+            position: absolute;
+            width: 200%; height: 200%;
+            top: 50%; left: -50%;
+            background-image: 
+                linear-gradient(var(--neon-blue) 1px, transparent 1px),
+                linear-gradient(90deg, var(--neon-blue) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: rotateX(75deg);
+            opacity: 0.15;
+        }
+
+        .floating-orb {
+            position: absolute;
+            font-size: 4rem;
+            filter: blur(1px);
+            transition: transform 0.1s ease-out;
+        }
+
+        /* --- MYSTERY DANGER BUTTON --- */
+        .mystery-back {
+            position: fixed;
+            top: 20px; right: 20px;
+            padding: 15px 25px;
+            background: var(--danger);
+            color: white;
+            text-decoration: none;
+            border: 4px solid #000;
+            font-weight: bold;
+            z-index: 10000;
+            box-shadow: 10px 10px 0 #000;
+            transition: 0.2s;
+        }
+
+        .mystery-back:hover {
+            transform: translate(-5px, -5px);
+            box-shadow: 15px 15px 0 var(--neon-pink);
+            background: #fff; color: #000;
+        }
+
+        /* --- CRYSTAL BALL AREA --- */
+        .content-wrapper {
+            position: relative;
+            z-index: 100;
+            text-align: center;
+            transform-style: preserve-3d;
+        }
+
+        .ball {
+            width: 260px; height: 260px;
+            background: radial-gradient(circle at 30% 30%, #fff, var(--neon-blue), #000);
+            border-radius: 50%;
+            box-shadow: 0 0 100px var(--neon-blue), inset 0 0 40px white;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            margin-bottom: 30px;
+            animation: hoverBall 4s ease-in-out infinite;
+        }
+
+        @keyframes hoverBall {
+            0%, 100% { transform: translateZ(50px) translateY(0); }
+            50% { transform: translateZ(100px) translateY(-20px); }
+        }
+
+        .input-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 20px;
+            border: 2px solid var(--neon-pink);
+            backdrop-filter: blur(10px);
+            transform: translateZ(30px);
+        }
+
+        input {
+            width: 100%; padding: 12px;
+            background: #000; border: 1px solid var(--neon-blue);
+            color: #fff; text-align: center; margin-bottom: 15px;
+        }
+
+        button {
+            width: 100%; padding: 12px;
+            background: var(--neon-blue); border: none;
+            font-weight: bold; cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        /* --- IMAGE REVEAL MODAL --- */
+        #reveal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 99999;
+            display: none; align-items: center; justify-content: center;
+            flex-direction: column;
+            backdrop-filter: blur(20px);
+        }
+
+        #reveal.active { display: flex; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        @keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+
+        .big-photo {
+            width: 300px; height: 300px;
+            object-fit: cover;
+            border: 10px solid #fff;
+            border-radius: 30px;
+            box-shadow: 0 0 50px var(--neon-blue);
+        }
+
+        .shake { animation: earthquake 0.1s infinite; }
+        @keyframes earthquake { 0% { transform: translate(3px, 3px); } 50% { transform: translate(-3px, -3px); } }
+    </style>
+</head>
+<body id="body">
+
+    <a href="h06.html" class="mystery-back">⚠️ EXIT REALITY</a>
+
+    <div id="viewport">
+        <div class="grid-floor"></div>
+        <div class="floating-orb" style="top: 10%; left: 10%; transform: translateZ(-200px);">🚀</div>
+        <div class="floating-orb" style="bottom: 15%; right: 10%; transform: translateZ(-150px);">🛸</div>
+        <div class="floating-orb" style="top: 50%; left: 5%; transform: translateZ(-100px);">🌌</div>
+    </div>
+
+    <div id="reveal" onclick="this.classList.remove('active')">
+        <h2 id="rTitle" style="color:var(--neon-blue); margin-bottom:20px;"></h2>
+        <img id="rImg" class="big-photo" src="">
+        <p style="margin-top:20px; color:#555;">TAP ANYWHERE TO GO BACK</p>
+    </div>
+
+    <div class="content-wrapper">
+        <h1 style="color:var(--neon-blue); margin-bottom:20px; letter-spacing:10px;">FUTURE 2036</h1>
+        
+        <div class="ball" onclick="openMe()">
+            <div id="status" style="width:80%; font-size:0.8rem; color:#fff;">ENTER NAME & TAP "PREDICT"</div>
+        </div>
+
+        <div class="input-card">
+            <input type="text" id="uName" placeholder="ENTER FRIEND NAME">
+            <button onclick="doMagic()">SEE THE FUTURE ⚡</button>
+        </div>
+    </div>
+
+    <script>
+        const db = {
+            "rahul": { q: "RAHUL: Galactic Emperor of Mars 👑", i: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rahul" },
+            "priya": { q: "PRIYA: Chief Meme Officer at Google 🤳", i: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya" }
+        };
+
+        let currentData = null;
+
+        function doMagic() {
+            const name = document.getElementById('uName').value.toLowerCase().trim();
+            if(!name) return alert("Write a name first!");
+
+            document.getElementById('body').classList.add('shake');
+            
+            setTimeout(() => {
+                document.getElementById('body').classList.remove('shake');
+                
+                if(db[name]) {
+                    currentData = db[name];
+                } else {
+                    currentData = {
+                        q: name.toUpperCase() + ": Professional VR Gamer 🎮",
+                        i: `https://api.dicebear.com/7.x/pixel-art/svg?seed=${name}`
+                    };
+                }
+
+                document.getElementById('status').innerHTML = `<b>${currentData.q}</b><br><br><span style="color:yellow;">TAP BALL TO SEE PHOTO</span>`;
+            }, 600);
+        }
+
+        function openMe() {
+            if(!currentData) return;
+            document.getElementById('rImg').src = currentData.i;
+            document.getElementById('rTitle').innerText = name.toUpperCase() + " IN 2036";
+            document.getElementById('reveal').classList.add('active');
+        }
+
+        // 3D Mouse Parallax
+        document.addEventListener('mousemove', (e) => {
+            const x = (window.innerWidth / 2 - e.pageX) / 20;
+            const y = (window.innerHeight / 2 - e.pageY) / 20;
+            document.getElementById('viewport').style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+            
+            // Move orbs slightly differently for "depth"
+            document.querySelectorAll('.floating-orb').forEach(orb => {
+                orb.style.transform += ` translate(${x/2}px, ${y/2}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
+
+

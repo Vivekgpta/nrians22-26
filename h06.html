@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Memories | 3D Chaos Edition</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Outfit:wght@400;900&display=swap');
+
+        body {
+            background: #050505;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .comic-text {
+            font-family: 'Bangers', cursive;
+            letter-spacing: 2px;
+        }
+
+        .canvas-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+        }
+
+        .floating-emoji {
+            position: absolute;
+            font-size: 3rem;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .magnetic-btn {
+            display: inline-block;
+            transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* Timeline Curve */
+        .timeline-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="bg-canvas" class="canvas-bg"></canvas>
+
+    <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] glass px-8 py-3 rounded-full flex gap-8 items-center">
+        <a href="#home" class="hover:text-yellow-400 transition-all font-bold">Home</a>
+        <a href="h06gallery.html" class="hover:text-yellow-400 transition-all font-bold">Gallery</a>
+        <a href="h06friends.html" class="hover:text-yellow-400 transition-all font-bold">Friends</a>
+          <a href="h06Journey.html" class="hover:text-yellow-400 transition-all font-bold">Journey</a>
+        <a href="h06Guestbook.html" class="hover:text-yellow-400 transition-all font-bold">Guestbook</a>
+           <a href="h06Contact.html" class="hover:text-yellow-400 transition-all font-bold">Contact</a>
+    </nav>
+
+    <section id="home" class="relative h-screen flex flex-col items-center justify-center text-center px-4">
+        <div class="floating-emoji" style="top: 20%; left: 15%;">🎓</div>
+        <div class="floating-emoji" style="top: 60%; right: 10%;">🍕</div>
+        <div class="floating-emoji" style="bottom: 15%; left: 20%;">🤪</div>
+
+        <h1 class="comic-text text-7xl md:text-9xl text-yellow-400 uppercase drop-shadow-2xl hero-title">
+            Our College <br><span class="text-white">Memories</span>
+        </h1>
+        <p class="text-xl mt-6 max-w-2xl opacity-80">Where every "I'm staying in" turned into a 4 AM adventure.</p>
+
+        <button
+            class="magnetic-btn mt-10 bg-white text-black px-10 py-4 rounded-full font-black text-xl hover:bg-yellow-400 transition-colors"
+            onclick="confettiPulse()">
+            PARTY MODE 🎊
+        </button>
+
+        <div class="absolute bottom-10 animate-bounce">
+            <span class="text-3xl">↓</span>
+        </div>
+    </section>
+
+    <section id="gallery" class="py-24 px-6 md:px-20">
+        <h2 class="comic-text text-5xl mb-16 text-center">Hall of Shame (Gallery) 📸</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="glass p-4 rounded-3xl" data-tilt data-tilt-scale="1.05">
+                <div class="h-64 bg-zinc-800 rounded-2xl mb-4 overflow-hidden">
+                    <img src="img/IMG_20251207_111313_567.jpg" class="w-full h-full object-cover">
+                </div>
+                <h3 class="font-bold text-xl text-yellow-400">The 3 AM Grind</h3>
+                <p class="opacity-60 text-sm">Actually just 2 hours of memes and 5 minutes of study.</p>
+            </div>
+            <div class="glass p-4 rounded-3xl" data-tilt data-tilt-scale="1.05">
+                <div class="h-64 bg-zinc-800 rounded-2xl mb-4 overflow-hidden">
+                    <img src="img/1714292566276.jpg" class="w-full h-full object-cover">
+                </div>
+                <h3 class="font-bold text-xl text-yellow-400">The Squad</h3>
+                <p class="opacity-60 text-sm">Photo taken seconds before disaster.</p>
+            </div>
+            <div class="glass p-4 rounded-3xl" data-tilt data-tilt-scale="1.05">
+                <div class="h-64 bg-zinc-800 rounded-2xl mb-4 overflow-hidden">
+                    <img src="img/1714292749732.jpg" class="w-full h-full object-cover">
+                </div>
+                <h3 class="font-bold text-xl text-yellow-400">Grad Day</h3>
+                <p class="opacity-60 text-sm">We survived? We survived.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="friends" class="py-24 bg-white/5">
+        <h2 class="comic-text text-5xl mb-16 text-center"><a href="h06legends.html">Meet the Legends 🤡</a></h2>
+        <div class="flex flex-wrap justify-center gap-10 px-10">
+            <div class="flex flex-col items-center group cursor-pointer" data-tilt>
+                <div
+                    class="w-32 h-32 rounded-full border-4 border-yellow-400 overflow-hidden mb-4 transition-transform group-hover:scale-110">
+                    <img src="images/abhay.jpg" alt="avatar">
+                </div>
+                <span class="font-bold">The Sleeper</span>
+                <span class="bg-blue-500 text-[10px] px-2 py-1 rounded-full uppercase font-black mt-2">Always
+                    Late</span>
+            </div>
+            <div class="flex flex-col items-center group cursor-pointer" data-tilt>
+                <div
+                    class="w-32 h-32 rounded-full border-4 border-green-400 overflow-hidden mb-4 transition-transform group-hover:scale-110">
+                    <img src="images/aman.jpg" alt="avatar">
+                </div>
+                <span class="font-bold">The Topper</span>
+                <span class="bg-green-500 text-[10px] px-2 py-1 rounded-full uppercase font-black mt-2">Notes
+                    Dealer</span>
+            </div>
+            <div class="flex flex-col items-center group cursor-pointer" data-tilt>
+                <div
+                    class="w-32 h-32 rounded-full border-4 border-red-400 overflow-hidden mb-4 transition-transform group-hover:scale-110">
+                    <img src="images/dheeraj.jpg" alt="avatar">
+                </div>
+                <span class="font-bold">The Clown</span>
+                <span class="bg-red-500 text-[10px] px-2 py-1 rounded-full uppercase font-black mt-2">Meme Lord</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="guestbook" class="py-24 px-6 max-w-6xl mx-auto">
+        <div class="glass p-10 rounded-[40px] mb-12">
+            <h2 class="comic-text text-4xl mb-6">Leave a Message ✍️</h2>
+            <div class="flex flex-col md:flex-row gap-4">
+                <input id="guest-name" type="text"
+                    class="md:w-1/3 bg-black/40 border border-white/20 rounded-xl p-4 focus:ring-2 ring-yellow-400 outline-none"
+                    placeholder="Your Name">
+                <input id="guest-msg" type="text"
+                    class="md:w-2/3 bg-black/40 border border-white/20 rounded-xl p-4 focus:ring-2 ring-yellow-400 outline-none"
+                    placeholder="Say something nice (or roast us)...">
+                <button onclick="addMessage()"
+                    class="bg-yellow-400 text-black px-8 py-4 rounded-xl font-bold uppercase hover:scale-105 active:scale-95 transition-transform">Post</button>
+            </div>
+        </div>
+
+        <div id="messages-container" class="flex flex-wrap justify-center gap-6"></div>
+    </section>
+
+    <footer class="py-10 text-center opacity-50">
+        <p>Made with ❤️ and too much caffeine by [Your Name]</p>
+    </footer>
+
+    <script>
+        // GSAP Initialization
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 1. Three.js Background Logic
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg-canvas'), alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // Floating 3D Blobs
+        const geometry = new THREE.IcosahedronGeometry(2, 2);
+        const material = new THREE.MeshNormalMaterial({ wireframe: true, transparent: true, opacity: 0.1 });
+        const sphere = new THREE.Mesh(geometry, material);
+        scene.add(sphere);
+
+        camera.position.z = 5;
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            sphere.rotation.x += 0.005;
+            sphere.rotation.y += 0.005;
+            renderer.render(scene, camera);
+        }
+        animate3D();
+
+        // 2. GSAP Animations
+        // Hero Title Entrance
+        gsap.from(".hero-title", {
+            y: 200,
+            rotate: -10,
+            opacity: 0,
+            duration: 1.5,
+            ease: "elastic.out(1, 0.5)"
+        });
+
+        // Floating Emojis Animation
+        gsap.to(".floating-emoji", {
+            y: -20,
+            x: 10,
+            duration: 2,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+            stagger: 0.2
+        });
+
+        // Magnetic Button Logic
+        const mBtn = document.querySelector('.magnetic-btn');
+        mBtn.addEventListener('mousemove', (e) => {
+            const rect = mBtn.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            gsap.to(mBtn, { x: x * 0.3, y: y * 0.3, duration: 0.4 });
+        });
+        mBtn.addEventListener('mouseleave', () => {
+            gsap.to(mBtn, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.3)" });
+        });
+
+        // 3. Fun Features
+        function confettiPulse() {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#facc15', '#ffffff', '#3b82f6']
+            });
+        }
+
+        // Auto-confetti on scroll to friends
+        ScrollTrigger.create({
+            trigger: "#friends",
+            start: "top center",
+            onEnter: () => confettiPulse()
+        });
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Initialize Vanilla Tilt
+        VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
+            max: 15,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.2,
+        });
+        // --- Guestbook Logic ---
+
+        const msgContainer = document.getElementById('messages-container');
+        const colors = ['#fef08a', '#bbf7d0', '#bfdbfe', '#fbcfe8', '#ddd6fe'];
+
+        // Load messages on start
+        window.onload = () => {
+            const savedMessages = JSON.parse(localStorage.getItem('college_messages') || '[]');
+            savedMessages.forEach(msg => renderMessage(msg));
+        };
+
+        function addMessage() {
+            const nameInput = document.getElementById('guest-name');
+            const msgInput = document.getElementById('guest-msg');
+
+            if (!nameInput.value || !msgInput.value) {
+                alert("Don't be shy! Enter a name and message.");
+                return;
+            }
+
+            const newMessage = {
+                id: Date.now(),
+                name: nameInput.value,
+                text: msgInput.value,
+                rotate: Math.floor(Math.random() * 10) - 5, // Random tilt -5 to +5 deg
+                color: colors[Math.floor(Math.random() * colors.length)]
+            };
+
+            // Save to LocalStorage
+            const allMsgs = JSON.parse(localStorage.getItem('college_messages') || '[]');
+            allMsgs.push(newMessage);
+            localStorage.setItem('college_messages', JSON.stringify(allMsgs));
+
+            // Render & Reset
+            renderMessage(newMessage);
+            nameInput.value = '';
+            msgInput.value = '';
+
+            // Tiny celebration
+            confetti({ particleCount: 50, spread: 30, origin: { y: 0.8 } });
+        }
+
+        function renderMessage(msg) {
+            const note = document.createElement('div');
+            note.className = "p-6 w-64 shadow-xl transition-all cursor-pointer hover:scale-110 relative group";
+            note.style.backgroundColor = msg.color;
+            note.style.transform = `rotate(${msg.rotate}deg)`;
+            note.style.color = "#1a1a1a";
+            note.setAttribute('data-id', msg.id);
+
+            note.innerHTML = `
+        <button onclick="deleteMessage(${msg.id})" class="absolute top-1 right-2 opacity-0 group-hover:opacity-100 text-red-600 font-bold">✕</button>
+        <p class="font-bold border-b border-black/10 mb-2">${msg.name}</p>
+        <p class="italic text-sm">"${msg.text}"</p>
+    `;
+
+            msgContainer.prepend(note);
+
+            // GSAP Pop-in animation
+            gsap.from(note, { scale: 0, opacity: 0, duration: 0.5, ease: "back.out(1.7)" });
+        }
+
+        function deleteMessage(id) {
+            let allMsgs = JSON.parse(localStorage.getItem('college_messages') || '[]');
+            allMsgs = allMsgs.filter(m => m.id !== id);
+            localStorage.setItem('college_messages', JSON.stringify(allMsgs));
+
+            // Remove from UI
+            const el = document.querySelector(`[data-id="${id}"]`);
+            gsap.to(el, { scale: 0, opacity: 0, duration: 0.3, onComplete: () => el.remove() });
+        }
+    </script>
+</body>
+
+</html>

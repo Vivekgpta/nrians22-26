@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaos Guestbook | Collision Edition</title>
+    <style>
+        :root {
+            --neon-yellow: #ffcc00;
+            --danger-red: #ff3131;
+            --bg: #050505;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Arial Black', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            perspective: 1200px;
+        }
+
+        #world {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            transform-style: preserve-3d;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+        }
+
+        .exit-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: var(--danger-red);
+            color: white;
+            text-decoration: none;
+            border: 2px solid #000;
+            z-index: 1000;
+            font-size: 0.8rem;
+            box-shadow: 5px 5px 0 #000;
+        }
+
+        .input-panel {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input,
+        textarea {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--neon-yellow);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        button {
+            background: var(--neon-yellow);
+            color: black;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .message-cube {
+            position: absolute;
+            width: 140px;
+            height: 100px;
+            background: white;
+            color: black;
+            padding: 10px;
+            border-radius: 15px;
+            cursor: grab;
+            user-select: none;
+            border: 4px solid var(--neon-yellow);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-size: 0.8rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            /* Smooth rotation transition */
+            transition: transform 0.05s linear;
+        }
+
+        .earthquake {
+            animation: shake 0.2s infinite;
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translate(2px, 2px);
+            }
+
+            50% {
+                transform: translate(-2px, -1px);
+            }
+
+            100% {
+                transform: translate(1px, 2px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="h06.html" class="exit-btn">⚠️ ABORT MISSION</a>
+    <div id="world"></div>
+
+    <div class="input-panel">
+        <input type="text" id="nameInput" placeholder="NAME">
+        <textarea id="msgInput" placeholder="MESSAGE..."></textarea>
+        <button onclick="spawnMessage()">DROP IN VOID ⚡</button>
+    </div>
+
+    <script>
+        const world = document.getElementById('world');
+        const cubes = [];
+        const gravity = 0.4;
+        const bounce = 0.7;
+        const friction = 0.99;
+
+        function spawnMessage() {
+            const name = document.getElementById('nameInput').value || "Legend";
+            const msg = document.getElementById('msgInput').value || "Chaos!";
+
+            const nameInput = document.getElementById('nameInput');
+            const msgInput = document.getElementById('msgInput');
+
+            // const name = nameInput.value || "Legend";
+            // const msg = msgInput.value || "Chaos!";
+
+            const el = document.createElement('div');
+            el.className = 'message-cube';
+            el.innerHTML = `<b>${name}</b><p>${msg}</p>`;
+
+            const cube = {
+                el,
+                width: 140, height: 100,
+                x: Math.random() * (window.innerWidth - 140),
+                y: -150,
+                vx: (Math.random() - 0.5) * 15,
+                vy: 5,
+                angle: (Math.random() - 0.5) * 20,
+                isDragging: false
+            };
+
+            el.onmousedown = () => cube.isDragging = true;
+            world.appendChild(el);
+            cubes.push(cube);
+
+            document.body.classList.add('earthquake');
+            setTimeout(() => document.body.classList.remove('earthquake'), 200);
+        }
+
+        document.onmouseup = () => cubes.forEach(c => c.isDragging = false);
+        document.onmousemove = (e) => {
+            cubes.forEach(c => {
+                if (c.isDragging) {
+                    c.x = e.clientX - c.width / 2;
+                    c.y = e.clientY - c.height / 2;
+                    c.vx = 0; c.vy = 0;
+                }
+            });
+        };
+
+        function resolveCollision(c1, c2) {
+            const dx = (c1.x + c1.width / 2) - (c2.x + c2.width / 2);
+            const dy = (c1.y + c1.height / 2) - (c2.y + c2.height / 2);
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const minDistance = c1.width / 1.2; // Approximate collision radius
+
+            if (distance < minDistance) {
+                // Simple Elastic Collision
+                const angle = Math.atan2(dy, dx);
+                const targetX = c2.x + c2.width / 2 + Math.cos(angle) * minDistance;
+                const targetY = c2.y + c2.height / 2 + Math.sin(angle) * minDistance;
+
+                const ax = (targetX - (c1.x + c1.width / 2)) * 0.1;
+                const ay = (targetY - (c1.y + c1.height / 2)) * 0.1;
+
+                c1.vx += ax; c1.vy += ay;
+                c2.vx -= ax; c2.vy -= ay;
+            }
+        }
+
+        function engine() {
+            for (let i = 0; i < cubes.length; i++) {
+                const c = cubes[i];
+
+                if (!c.isDragging) {
+                    // Gravity & Physics
+                    c.vy += gravity;
+                    c.vx *= friction;
+                    c.x += c.vx;
+                    c.y += c.vy;
+
+                    // Wall Collisions
+                    if (c.y + c.height > window.innerHeight) {
+                        c.y = window.innerHeight - c.height;
+                        c.vy *= -bounce;
+                    }
+                    if (c.x < 0 || c.x + c.width > window.innerWidth) {
+                        c.vx *= -bounce;
+                        c.x = c.x < 0 ? 0 : window.innerWidth - c.width;
+                    }
+
+                    // Inter-Cube Collisions
+                    for (let j = i + 1; j < cubes.length; j++) {
+                        resolveCollision(c, cubes[j]);
+                    }
+                }
+
+                c.el.style.transform = `translate3d(${c.x}px, ${c.y}px, 0) rotate(${c.angle}deg)`;
+            }
+            requestAnimationFrame(engine);
+        }
+
+        engine();
+        // Start with 2 cubes
+        spawnMessage(); setTimeout(spawnMessage, 300);
+    </script>
+</body>
+
+</html>

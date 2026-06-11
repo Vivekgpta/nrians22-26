@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DO NOT PRESS | The Mystery Box</title>
+    <style>
+        :root {
+            --neon-red: #ff3131;
+            --neon-gold: #ffcc00;
+            --bg-dark: #050505;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-dark);
+            color: #fff;
+            font-family: 'Arial Black', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            perspective: 1500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- 3D SCENE --- */
+        .scene {
+            width: 200px;
+            height: 200px;
+            transform-style: preserve-3d;
+            transition: transform 0.1s;
+            cursor: grab;
+        }
+
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: slowSpin 10s linear infinite;
+        }
+
+        @keyframes slowSpin {
+            from { transform: rotateX(0) rotateY(0); }
+            to { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        .face {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(20, 20, 20, 0.9);
+            border: 4px solid var(--neon-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--neon-red);
+            backface-visibility: visible;
+            user-select: none;
+            box-shadow: inset 0 0 30px rgba(255, 49, 49, 0.2);
+        }
+
+        /* Cube Positions */
+        .front  { transform: translateZ(100px); }
+        .back   { transform: rotateY(180deg) translateZ(100px); }
+        .right  { transform: rotateY(90deg) translateZ(100px); }
+        .left   { transform: rotateY(-90deg) translateZ(100px); }
+        .top    { transform: rotateX(90deg) translateZ(100px); }
+        .bottom { transform: rotateX(-90deg) translateZ(100px); }
+
+        /* --- THE SECRET BUTTON --- */
+        .secret-btn {
+            background: var(--neon-red);
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--neon-red);
+            transition: 0.2s;
+        }
+
+        .secret-btn:hover { transform: scale(1.2); background: white; }
+
+        /* --- OVERLAY / MEME --- */
+        #meme-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(20px);
+        }
+
+        #meme-overlay.active { display: flex; animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        @keyframes zoomIn { from { transform: scale(0); } to { transform: scale(1); } }
+
+        .meme-img {
+            max-width: 400px; border: 10px solid white; border-radius: 20px;
+            box-shadow: 0 0 50px var(--neon-gold);
+        }
+
+        .retry-btn {
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: var(--neon-gold);
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        /* --- TEXT HINT --- */
+        .hint {
+            position: fixed; bottom: 50px;
+            color: #444; letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .danger-back {
+            position: fixed; top: 30px; right: 30px;
+            padding: 10px 20px; border: 2px solid white;
+            color: white; text-decoration: none; font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+
+    <h1 style="color: var(--neon-red); margin-bottom: 50px; text-shadow: 0 0 20px var(--neon-red);">THE BOX OF CHAOS</h1>
+
+    <div class="scene" id="scene">
+        <div class="cube" id="cube">
+            <div class="face front">KEEP</div>
+            <div class="face back">LOOKING</div>
+            <div class="face right">NOT HERE</div>
+            <div class="face left">ALMOST</div>
+            <div class="face top">
+                <button class="secret-btn" onclick="solve()"></button>
+            </div>
+            <div class="face bottom">TRY TOP</div>
+        </div>
+    </div>
+
+    <div class="hint">DRAG TO ROTATE & FIND THE RED TRIGGER</div>
+
+    <div id="meme-overlay">
+        <h1 style="color: var(--neon-gold); margin-bottom: 20px;">CONGRATS! YOU DIED.</h1>
+        <img class="meme-img" id="meme-display" src="" alt="Meme">
+      <button class="retry-btn" >  <a href="h06.html">TRY AGAIN 🔄</a></button>
+    </div>
+
+    <script>
+        const cube = document.getElementById('cube');
+        const overlay = document.getElementById('meme-overlay');
+        const memeDisplay = document.getElementById('meme-display');
+        
+        const memes = [
+            "https://i.imgflip.com/4/30zz5g.jpg", // Surprised Pikachu
+            "https://i.imgflip.com/4/1ur9b0.jpg", // Distracted Boyfriend
+            "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJidW04N2x5Z3J3Z2Z6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6ZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7TKMGpxP5O9Z8VnW/giphy.gif"
+        ];
+
+        // Interaction: Rotate cube with mouse
+        let isDragging = false;
+        let startX, startY;
+        let rotateX = 0, rotateY = 0;
+
+        document.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.pageX;
+            startY = e.pageY;
+            cube.style.animation = "none"; // Stop auto-spin on interaction
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            let deltaX = e.pageX - startX;
+            let deltaY = e.pageY - startY;
+            rotateY += deltaX * 0.5;
+            rotateX -= deltaY * 0.5;
+            cube.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            startX = e.pageX;
+            startY = e.pageY;
+        });
+
+        document.addEventListener('mouseup', () => isDragging = false);
+
+        // Function: Solve the mystery
+        function solve() {
+            const randomMeme = memes[Math.floor(Math.random() * memes.length)];
+            memeDisplay.src = randomMeme;
+            overlay.classList.add('active');
+        }
+
+        // Function: Reset
+        function reset() {
+            overlay.classList.remove('active');
+            cube.style.animation = "slowSpin 10s linear infinite";
+        }
+    </script>
+</body>
+</html>

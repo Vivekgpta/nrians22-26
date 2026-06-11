@@ -1,0 +1,247 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Chaos Crew | 25 Legends</title>
+    <style>
+        :root {
+            --neon-pink: #ff00ff;
+            --neon-blue: #00f2ff;
+            --neon-yellow: #ffcc00;
+            --dark-bg: #050505;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--dark-bg);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            overflow-x: hidden;
+            perspective: 1500px;
+            min-height: 100vh;
+        }
+
+        /* --- HYPNOTIC TUNNEL ILLUSION --- */
+        .illusion-container {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            z-index: -2;
+            background: repeating-conic-gradient(
+                from 0deg,
+                #000 0deg 15deg,
+                #111 15deg 30deg,
+                rgba(255, 0, 255, 0.05) 30deg 45deg,
+                rgba(0, 242, 255, 0.05) 45deg 60deg
+            );
+            animation: rotateTunnel 30s linear infinite;
+            filter: blur(2px) contrast(1.5);
+            transition: transform 0.1s ease-out;
+        }
+
+        @keyframes rotateTunnel {
+            from { transform: rotate(0deg) scale(1); }
+            to { transform: rotate(360deg) scale(1.1); }
+        }
+
+        .vortex-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, transparent 10%, var(--dark-bg) 90%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- CONTENT LAYOUT --- */
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            z-index: 10;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            text-shadow: 3px 3px 0 var(--neon-pink), -3px -3px 0 var(--neon-blue);
+            margin-bottom: 20px;
+        }
+
+        .chaos-btn {
+            background: white;
+            color: black;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--neon-yellow);
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .chaos-btn:hover {
+            transform: scale(1.1) rotate(-3deg);
+            background: var(--neon-yellow);
+        }
+
+        /* --- 3D GRID --- */
+        .wall {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 40px;
+            padding: 40px;
+            max-width: 1500px;
+            margin: 0 auto;
+            transform-style: preserve-3d;
+            transition: transform 0.2s ease-out;
+        }
+
+        .card {
+            height: 340px;
+            cursor: pointer;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+
+        /* Alternating Depth */
+        .card:nth-child(odd) { transform: translateZ(40px); }
+        .card:nth-child(even) { transform: translateZ(-40px); }
+
+        .card-inner {
+            position: relative;
+            width: 100%; height: 100%;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .card.active .card-inner { transform: rotateY(180deg); }
+
+        .card:hover .card-inner {
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .front, .back {
+            position: absolute;
+            width: 100%; height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            border: 2px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .front {
+            background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
+        }
+
+        .front img {
+            width: 110px; height: 110px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 3px solid var(--neon-blue);
+            transition: 0.5s;
+        }
+
+        .card:hover img { transform: scale(1.1) rotate(5deg); border-color: var(--neon-pink); }
+
+        .back {
+            background: var(--neon-pink);
+            color: white;
+            transform: rotateY(180deg);
+            text-align: center;
+        }
+
+        /* --- CHAOS MODE ANIMATION --- */
+        .chaos-active .card {
+            animation: fly 6s infinite alternate ease-in-out;
+        }
+
+        @keyframes fly {
+            0% { transform: translate3d(0, 0, 0) rotate(0); }
+            100% { transform: translate3d(20px, -60px, 200px) rotate(15deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="illusion-container" id="illusion"></div>
+    <div class="vortex-overlay"></div>
+
+    <header>
+        <a href="h06.html" style="color:white; text-decoration:none; opacity:0.6;">← Back</a>
+        <h1>THE LEGENDS WALL</h1>
+        <button class="chaos-btn" onclick="toggleChaos()">Initiate Chaos ⚡</button>
+    </header>
+
+    <div class="wall" id="cardWall"></div>
+
+    <script>
+        const wall = document.getElementById('cardWall');
+        const illusion = document.getElementById('illusion');
+        
+        // Configuration for 25 members
+        const roles = ["Chaos Agent", "Sleeper Cell", "Aux God", "Note Dealer", "Last-Minute Pro"];
+        const roasts = [
+            "Known for saying 'I'm outside' while still in the shower.",
+            "Can survive on 2 hours of sleep and 4 energy drinks.",
+            "Actually the reason the group chat is always on mute.",
+            "If overthinking was a sport, they'd have a gold medal."
+        ];
+
+        // Generate 25 Cards
+        for (let i = 1; i <= 25; i++) {
+            const role = roles[Math.floor(Math.random() * roles.length)];
+            const roast = roasts[Math.floor(Math.random() * roasts.length)];
+            
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-inner">
+                    <div class="front">
+                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=${i}" alt="Avatar">
+                        <h3>LEGEND #${i}</h3>
+                        <p style="color:var(--neon-blue); font-size:0.8rem; margin-top:5px;">${role}</p>
+                    </div>
+                    <div class="back">
+                        <h3>THE ROAST</h3>
+                        <p>${roast}</p>
+                    </div>
+                </div>
+            `;
+            card.onclick = () => card.classList.toggle('active');
+            wall.appendChild(card);
+        }
+
+        // Mouse Illusion & Wall Parallax
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) - 0.5;
+            const y = (e.clientY / window.innerHeight) - 0.5;
+
+            // Shift background illusion
+            illusion.style.transform = `rotate(${x * 15}deg) translate(${x * 60}px, ${y * 60}px) scale(${1 + Math.abs(x)})`;
+            
+            // Tilt the entire card wall
+            wall.style.transform = `rotateY(${x * 12}deg) rotateX(${-y * 12}deg)`;
+        });
+
+        function toggleChaos() {
+            document.body.classList.toggle('chaos-active');
+            const btn = document.querySelector('.chaos-btn');
+            btn.innerText = document.body.classList.contains('chaos-active') ? "End the Madness 🛑" : "Initiate Chaos ⚡";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Infinite Journey | 3D Chaos</title>
+    <style>
+        :root {
+            --year1: #00ff88; --year2: #00d2ff; --year3: #bc13fe; --year4: #ff3131;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Arial Black', sans-serif;
+            overflow-x: hidden;
+            height: 12000px;
+        }
+
+        /* --- 3D ENGINE --- */
+        .viewport {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            perspective: 1000px;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+        }
+
+        .world {
+            position: absolute;
+            width: 100%; height: 100%;
+            transform-style: preserve-3d;
+        }
+
+        /* --- YEAR GATES --- */
+        .gate {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 90vw; height: 70vh;
+            margin-left: -45vw; margin-top: -35vh;
+            border: 10px double currentColor;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 40px;
+            backface-visibility: hidden;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5), inset 0 0 50px currentColor;
+        }
+
+        .year-label { font-size: 10rem; opacity: 0.2; position: absolute; z-index: -1; }
+
+        /* --- CONTENT ORBS --- */
+        .orb {
+            position: absolute;
+            padding: 15px 25px;
+            background: rgba(0,0,0,0.8);
+            border: 2px solid currentColor;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+            white-space: nowrap;
+            box-shadow: 0 0 20px currentColor;
+            z-index: 10;
+        }
+
+        .orb:hover { transform: scale(1.4) translateZ(50px); background: currentColor; color: #000; }
+
+        .center-story {
+            max-width: 500px;
+            text-align: center;
+            background: #000;
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid #fff;
+            transform: translateZ(30px);
+        }
+
+        /* --- PHOTO MODAL (LIGHTBOX) --- */
+        #photo-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            cursor: zoom-out;
+        }
+
+        #photo-modal.active { display: flex; }
+
+        #modal-img {
+            max-width: 80%;
+            max-height: 70%;
+            border: 5px solid white;
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgba(255,255,255,0.2);
+            transform: scale(0.8);
+            transition: 0.3s ease-out;
+        }
+
+        #photo-modal.active #modal-img { transform: scale(1); }
+
+        #modal-caption {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            color: var(--year1);
+            text-shadow: 0 0 10px black;
+        }
+
+        /* --- INDICATORS --- */
+        .hud {
+            position: fixed;
+            top: 20px; left: 20px;
+            color: var(--year1);
+            font-family: monospace;
+            z-index: 100;
+        }
+        
+        .scroll-hint {
+            position: fixed;
+            bottom: 20px; width: 100%; text-align: center;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    </style>
+</head>
+<body>
+<style>.danger-back {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 5000;
+            background: var(--danger-red);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            font-weight: bold;
+            border: 4px solid black;
+            box-shadow: 0 0 20px var(--danger-red);
+            text-transform: uppercase;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .danger-back::before {
+            content: "DO NOT PRESS";
+            position: absolute;
+            top: -100%; left: 0;
+            width: 100%; height: 100%;
+            background: yellow; color: black;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; transition: 0.3s;
+        }
+
+        .danger-back:hover::before { top: 0; }
+        .danger-back:hover { 
+            transform: scale(1.2) rotate(5deg); 
+            box-shadow: 0 0 50px var(--danger-red);
+        }
+</style>
+
+     <a href="h06DoNotPress.html" class="danger-back">SYSTEM ABORT</a>
+
+    <div id="photo-modal" onclick="closeModal()">
+        <img id="modal-img" src="" alt="Memory">
+        <h3 id="modal-caption"></h3>
+        <p style="margin-top:10px; font-size: 0.8rem; opacity: 0.6;">CLICK ANYWHERE TO CLOSE</p>
+    </div>
+
+    <div class="hud" id="hud">TIME-TRAVELER: ACTIVE</div>
+    <div class="scroll-hint">SCROLL TO FLY | CLICK EVENTS TO SEE PHOTOS ↓</div>
+
+    <div class="viewport">
+        <div class="world" id="world">
+            
+            <div class="gate" style="color: var(--year1); transform: translateZ(-1000px);">
+                <div class="year-label">YEAR 01</div>
+                <div class="center-story">
+                    <h2>THE FRESHMAN CHAOS</h2>
+                    <p>New faces, heavy bags, and zero idea where the library is.</p>
+                </div>
+                <div class="orb" style="top:10%; left:5%;" onclick="showImg('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=1000', 'Assignments (Copy-Paste)')">Assignments</div>
+                <div class="orb" style="top:20%; right:10%;" onclick="showImg('https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1000', 'First Bunk Ever')">First Bunk</div>
+                <div class="orb" style="bottom:15%; left:15%;" onclick="showImg('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000', 'Freshers Party Night')">Freshers Party 🎊</div>
+                <div class="orb" style="bottom:25%; right:5%;" onclick="showImg('https://images.unsplash.com/photo-1517842645767-c639042777db?q=80&w=1000', 'Mid-Sem Stress')">Mid-Sem Exams</div>
+            </div>
+
+            <div class="gate" style="color: var(--year2); transform: translateZ(-3500px);">
+                <div class="year-label">YEAR 02</div>
+                <div class="center-story">
+                    <h2>THE SQUAD ERA</h2>
+                    <p>Found the "Spot" and mastered the art of bunking.</p>
+                </div>
+                <div class="orb" style="top:-10%; left:20%;" onclick="showImg('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1000', 'Best College Trip')">College Trip 🚌</div>
+                <div class="orb" style="top:40%; right:-10%;" onclick="showImg('https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=1000', 'Class Punishment')">Punishment</div>
+                <div class="orb" style="bottom:10%; right:20%;" onclick="showImg('https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?q=80&w=1000', 'Late Night Notes')">Notes Sharing</div>
+                <div class="orb" style="bottom:-5%; left:0%;" onclick="showImg('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1000', 'Industrial Visit')">Industrial Visit</div>
+            </div>
+
+            <div class="gate" style="color: var(--year3); transform: translateZ(-6000px);">
+                <div class="year-label">YEAR 03</div>
+                <div class="center-story">
+                    <h2>THE TECHNICAL CRUNCH</h2>
+                    <p>Heavy projects, internship tears, and caffeine.</p>
+                </div>
+                <div class="orb" style="top:0%; right:30%;" onclick="showImg('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1000', 'Final Project Lab')">Main Project Lab</div>
+                <div class="orb" style="top:60%; left:-15%;" onclick="showImg('https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1000', 'Tech Fest Winners')">Tech Fest</div>
+                <div class="orb" style="bottom:5%; right:5%;" onclick="showImg('https://images.unsplash.com/photo-1521791136064-7986c2959213?q=80&w=1000', 'Internship Hustle')">Internship Search</div>
+                <div class="orb" style="top:20%; left:40%;" onclick="showImg('https://images.unsplash.com/photo-1530103043960-ef38714abb15?q=80&w=1000', 'Birthday Bash')">Celebrations 🎂</div>
+            </div>
+
+            <div class="gate" style="color: var(--year4); transform: translateZ(-8500px);">
+                <div class="year-label">YEAR 04</div>
+                <div class="center-story">
+                    <h2>THE FINAL FAREWELL</h2>
+                    <p>Placement tension and final goodbye selfies.</p>
+                </div>
+                <div class="orb" style="top:-20%; left:40%;" onclick="showImg('https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1000', 'Job Placement Day')">Placement Drive</div>
+                <div class="orb" style="bottom:20%; right:-5%;" onclick="showImg('https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=1000', 'The Last Ever Bunk')">The Last Bunk</div>
+                <div class="orb" style="bottom:-15%; left:10%;" onclick="showImg('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=1000', 'Final Exam Done')">Final Exam 📝</div>
+                <div class="orb" style="top:40%; right:20%;" onclick="showImg('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1000', 'Graduation Ceremony')">Graduation Day 🎓</div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const world = document.getElementById('world');
+        const hud = document.getElementById('hud');
+        const modal = document.getElementById('photo-modal');
+        const modalImg = document.getElementById('modal-img');
+        const modalCap = document.getElementById('modal-caption');
+        const loopThreshold = 10000;
+
+        // Function to show image
+        function showImg(src, title) {
+            modalImg.src = src;
+            modalCap.innerText = title;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Stop scrolling while viewing
+        }
+
+        // Function to close modal
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Resume scrolling
+        }
+
+        window.addEventListener('scroll', () => {
+            let scroll = window.scrollY;
+
+            if (scroll >= loopThreshold) {
+                window.scrollTo(0, 0);
+            }
+
+            world.style.transform = `translateZ(${scroll}px)`;
+
+            if (scroll < 2500) hud.innerText = "LOCATION: YEAR 1 (FRESHMAN)";
+            else if (scroll < 5000) hud.innerText = "LOCATION: YEAR 2 (SQUAD)";
+            else if (scroll < 7500) hud.innerText = "LOCATION: YEAR 3 (GRIND)";
+            else hud.innerText = "LOCATION: YEAR 4 (FAREWELL)";
+        });
+
+        for (let i = 0; i < 100; i++) {
+            const dust = document.createElement('div');
+            dust.style.position = 'absolute';
+            dust.style.width = '2px'; dust.style.height = '2px';
+            dust.style.background = '#fff';
+            dust.style.left = Math.random() * 100 + '%';
+            dust.style.top = Math.random() * 100 + '%';
+            dust.style.transform = `translateZ(-${Math.random() * loopThreshold}px)`;
+            world.appendChild(dust);
+        }
+    </script>
+</body>
+</html>
